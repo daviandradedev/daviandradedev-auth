@@ -1,0 +1,88 @@
+export type Language = "en" | "pt";
+
+export const translations = {
+  en: {
+    brand: "daviandrade.dev",
+    tagline: "One account for every portfolio app.",
+    auth: {
+      welcome: "Welcome back",
+      createAccount: "Create account",
+      signInSubtitle: "Sign in once, use Work Schedule, SeriesAholic, and more.",
+      signUpSubtitle: "One login shared across all daviandrade.dev projects.",
+      emailPlaceholder: "Email",
+      passwordPlaceholder: "Password",
+      namePlaceholder: "Name",
+      loading: "Please wait...",
+      signUpButton: "Create account",
+      signInButton: "Sign in",
+      toggleToSignIn: "Already have an account? Sign in",
+      toggleToSignUp: "Need an account? Create one",
+      emailExistsMsg: "This email is already registered. Sign in instead.",
+      weakPasswordMsg: "Password must be at least 8 characters.",
+      wrongCredentialsMsg: "Incorrect email or password.",
+      successMsg: "Account created. You are signed in.",
+      continueTo: "Continue to app",
+      signOut: "Sign out",
+    },
+    account: {
+      title: "Your account",
+      subtitle: "This identity unlocks every connected portfolio project.",
+      apps: "Connected apps",
+      signedInAs: "Signed in as",
+    },
+    apps: {
+      workSchedule: "Work Schedule",
+      seriesaholic: "SeriesAholic",
+      portfolio: "Portfolio",
+    },
+    footer: {
+      credit: "Built with 🥤 and code by Davi Andrade ©",
+    },
+    language: {
+      en: "EN",
+      pt: "PT",
+    },
+  },
+  pt: {
+    brand: "daviandrade.dev",
+    tagline: "Uma conta para todos os apps do portfólio.",
+    auth: {
+      welcome: "Bem-vindo de volta",
+      createAccount: "Criar conta",
+      signInSubtitle: "Entre uma vez e use Work Schedule, SeriesAholic e mais.",
+      signUpSubtitle: "Um login compartilhado entre todos os projetos daviandrade.dev.",
+      emailPlaceholder: "E-mail",
+      passwordPlaceholder: "Senha",
+      namePlaceholder: "Nome",
+      loading: "Aguarde...",
+      signUpButton: "Criar conta",
+      signInButton: "Entrar",
+      toggleToSignIn: "Já tem conta? Entrar",
+      toggleToSignUp: "Ainda não tem conta? Criar uma",
+      emailExistsMsg: "Este e-mail já está cadastrado. Faça login.",
+      weakPasswordMsg: "A senha deve ter no mínimo 8 caracteres.",
+      wrongCredentialsMsg: "E-mail ou senha incorretos.",
+      successMsg: "Conta criada. Você já está logado.",
+      continueTo: "Continuar para o app",
+      signOut: "Sair",
+    },
+    account: {
+      title: "Sua conta",
+      subtitle: "Esta identidade libera todos os projetos conectados do portfólio.",
+      apps: "Apps conectados",
+      signedInAs: "Logado como",
+    },
+    apps: {
+      workSchedule: "Work Schedule",
+      seriesaholic: "SeriesAholic",
+      portfolio: "Portfólio",
+    },
+    footer: {
+      credit: "Desenvolvido com 🥤 e código por Davi Andrade ©",
+    },
+    language: {
+      en: "EN",
+      pt: "PT",
+    },
+  },
+} as const;
