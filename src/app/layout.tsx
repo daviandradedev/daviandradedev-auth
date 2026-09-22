@@ -1,19 +1,25 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import Script from "next/script";
+import { cookies } from "next/headers";
+import { Inter, Syne } from "next/font/google";
 import { Footer } from "@/components/footer";
-import { LanguageToggle } from "@/components/language-toggle";
+import { SiteHeader } from "@/components/site-header";
+import { SkipLink } from "@/components/skip-link";
 import { Providers } from "@/components/providers";
+import { readLanguageCookieValue } from "@/lib/language";
+import { LEGACY_PREFERENCE_MIGRATE_SCRIPT } from "@/lib/preference-migrate";
+import { readThemeCookieValue } from "@/lib/theme";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const syne = Syne({
+  variable: "--font-display",
   subsets: ["latin"],
-  preload: false,
+  weight: ["600", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -21,21 +27,28 @@ export const metadata: Metadata = {
   description: "Single sign-on for daviandrade.dev portfolio apps",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export const viewport: Viewport = {
+  colorScheme: "light dark",
+};
+
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const cookieStore = await cookies();
+  const initialTheme = readThemeCookieValue(cookieStore.get("theme")?.value);
+  const initialLanguage = readLanguageCookieValue(cookieStore.get("language")?.value);
+
   return (
     <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      lang={initialLanguage ?? "en"}
+      className={`${inter.variable} ${syne.variable} h-full${initialTheme === "dark" ? " dark" : ""}`}
     >
-      <body className="flex min-h-full flex-col">
-        <Providers>
-          <header className="mx-auto flex w-full max-w-5xl items-center justify-between px-4 py-5">
-            <a href="/" className="text-sm font-semibold tracking-wide text-zinc-200">
-              daviandrade.dev
-            </a>
-            <LanguageToggle />
-          </header>
-          <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-4 pb-10">
+      <body className="app-shell">
+        <Script id="legacy-preference-migrate" strategy="beforeInteractive">
+          {LEGACY_PREFERENCE_MIGRATE_SCRIPT}
+        </Script>
+        <Providers initialTheme={initialTheme} initialLanguage={initialLanguage}>
+          <SkipLink />
+          <SiteHeader />
+          <main id="main-content" tabIndex={-1} className="page-shell">
             {children}
           </main>
           <Footer />
