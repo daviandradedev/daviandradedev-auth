@@ -7,6 +7,12 @@
     "build": "next build",
     "start": "next start --port 3100",
     "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:a11y": "playwright test",
+    "test:a11y:ci": "pnpm build && playwright test",
+    "test:all": "pnpm test:coverage && pnpm test:a11y",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push"
@@ -23,17 +29,23 @@
     "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
+    "@playwright/test": "^1.62.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/pg": "^8.23.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitest/coverage-v8": "3.2.4",
     "dotenv": "^17.4.2",
     "drizzle-kit": "^0.31.10",
     "eslint": "^9",
     "eslint-config-next": "16.3.3",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "happy-dom": "17.4.4",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "3.2.4"
   },
   "packageManager": "pnpm@10.15.0"
 }
