@@ -11,12 +11,12 @@ export function SignOutButton() {
   return (
     <button
       type="button"
+      className="btn-secondary"
       onClick={async () => {
         await authClient.signOut();
         router.push("/");
         router.refresh();
       }}
-      className="rounded-xl border border-white/10 px-3 py-2 text-xs font-semibold text-zinc-300 transition hover:bg-white/5"
     >
       {t("auth.signOut")}
     </button>
