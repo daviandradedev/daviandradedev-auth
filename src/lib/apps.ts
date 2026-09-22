@@ -5,7 +5,14 @@ export type PortfolioApp = {
   description: { en: string; pt: string };
 };
 
-export const portfolioApps: PortfolioApp[] = [
+export type ExternalLink = {
+  id: string;
+  nameKey: string;
+  href: string;
+  description: { en: string; pt: string };
+};
+
+export const ssoApps: PortfolioApp[] = [
   {
     id: "work-schedule",
     nameKey: "apps.workSchedule",
@@ -20,17 +27,22 @@ export const portfolioApps: PortfolioApp[] = [
     nameKey: "apps.seriesaholic",
     href: process.env.NEXT_PUBLIC_APP_SERIESAHOLIC_URL ?? "http://localhost:3000",
     description: {
-      en: "TV series tracker with TV Time import.",
-      pt: "Tracker de séries com importação do TV Time.",
+      en: "Track series, episodes, and watch progress.",
+      pt: "Acompanhe séries, episódios e progresso de visualização.",
     },
   },
+];
+
+export const externalLinks: ExternalLink[] = [
   {
     id: "portfolio",
     nameKey: "apps.portfolio",
-    href: process.env.NEXT_PUBLIC_APP_PORTFOLIO_URL ?? "https://daviandrade.dev",
+    href: process.env.NEXT_PUBLIC_APP_PORTFOLIO_URL ?? "https://daviandrade-portfolio.vercel.app/",
     description: {
       en: "Personal portfolio site.",
       pt: "Site do portfólio pessoal.",
     },
   },
 ];
+
+export const portfolioApps = ssoApps;

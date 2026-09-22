@@ -1,19 +1,14 @@
 function toHttpsOrigin(host?: string) {
-  if (!host) return undefined;
-  const trimmedHost = host.trim();
-  if (!trimmedHost) return undefined;
-  return trimmedHost.startsWith("http") ? trimmedHost : `https://${trimmedHost}`;
+  const value = host?.trim();
+  if (!value) return undefined;
+  return value.startsWith("http") ? value : `https://${value}`;
 }
 
-const defaults = [
+export const trustedOrigins = [
   "http://localhost:3100",
   "http://localhost:3000",
   "http://localhost:3001",
   "https://workschedule-dd.vercel.app",
-];
-
-export const trustedOrigins = [
-  ...defaults,
   process.env.NEXT_PUBLIC_BETTER_AUTH_URL,
   ...(process.env.NEXT_PUBLIC_BETTER_AUTH_TRUSTED_ORIGINS?.split(",") ?? []),
   toHttpsOrigin(process.env.NEXT_PUBLIC_VERCEL_URL),

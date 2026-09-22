@@ -1,11 +1,13 @@
 import { betterAuth } from "better-auth";
+import { bearer, oneTimeToken } from "better-auth/plugins";
+import { normalizeAuthEmail } from "@/lib/auth-policy";
 import { pool } from "@/lib/db";
+import { sendAuthLinkEmail } from "@/lib/mail/resend";
 
 function toHttpsOrigin(host?: string) {
-  if (!host) return undefined;
-  const trimmedHost = host.trim();
-  if (!trimmedHost) return undefined;
-  return trimmedHost.startsWith("http") ? trimmedHost : `https://${trimmedHost}`;
+  const value = host?.trim();
+  if (!value) return undefined;
+  return value.startsWith("http") ? value : `https://${value}`;
 }
 
 export const trustedOrigins = [
@@ -26,17 +28,44 @@ export const auth = betterAuth({
   baseURL: process.env.BETTER_AUTH_URL,
   trustedOrigins,
   advanced: cookieDomain
-    ? {
-        crossSubDomainCookies: {
-          enabled: true,
-          domain: cookieDomain,
-        },
-      }
+    ? { crossSubDomainCookies: { enabled: true, domain: cookieDomain } }
     : undefined,
+  user: {
+    changeEmail: {
+      enabled: true,
+      sendChangeEmailConfirmation: async ({ user, newEmail, url }) => {
+        await sendAuthLinkEmail(user.email, `Approve email change to ${newEmail}`, url);
+      },
+    },
+  },
+  emailVerification: {
+    sendOnSignUp: true,
+    sendOnSignIn: true,
+    autoSignInAfterVerification: true,
+    sendVerificationEmail: async ({ user, url }) => {
+      await sendAuthLinkEmail(user.email, "Verify your daviandrade.dev account", url);
+    },
+  },
   emailAndPassword: {
     enabled: true,
-    autoSignIn: true,
+    autoSignIn: false,
+    requireEmailVerification: true,
     minPasswordLength: 8,
     maxPasswordLength: 128,
+    revokeSessionsOnPasswordReset: true,
+    sendResetPassword: async ({ user, url }) => {
+      await sendAuthLinkEmail(user.email, "Reset your password", url);
+    },
+  },
+  plugins: [bearer(), oneTimeToken()],
+  databaseHooks: {
+    user: {
+      create: {
+        before: async (user) => {
+          const email = normalizeAuthEmail(user.email);
+          return { data: { ...user, email, id: email } };
+        },
+      },
+    },
   },
 });
