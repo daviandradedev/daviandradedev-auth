@@ -1,6 +1,7 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useState } from "react";
+import { persistLanguage } from "@/lib/language";
 import { translations, type Language } from "@/lib/translations";
 
 type LanguageContextType = {
@@ -21,17 +22,17 @@ function readPath(obj: unknown, path: string): string {
   return typeof value === "string" ? value : path;
 }
 
-export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguageState] = useState<Language>("en");
+type LanguageProviderProps = {
+  children: React.ReactNode;
+  initialLanguage?: Language | null;
+};
 
-  useEffect(() => {
-    const saved = localStorage.getItem("language") as Language | null;
-    if (saved === "en" || saved === "pt") setLanguageState(saved);
-  }, []);
+export function LanguageProvider({ children, initialLanguage = null }: LanguageProviderProps) {
+  const [language, setLanguageState] = useState<Language>(initialLanguage ?? "en");
 
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
-    localStorage.setItem("language", lang);
+    persistLanguage(lang);
   };
 
   const t = (path: string) => readPath(translations[language], path);
