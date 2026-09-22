@@ -38,6 +38,7 @@ export const authAccounts = pgTable(
   "account",
   {
     id: text("id").primaryKey(),
+    issuer: text("issuer").notNull(),
     userId: text("userId")
       .notNull()
       .references(() => authUsers.id, { onDelete: "cascade" }),
@@ -53,7 +54,10 @@ export const authAccounts = pgTable(
     createdAt: timestamp("createdAt", { withTimezone: true }).notNull(),
     updatedAt: timestamp("updatedAt", { withTimezone: true }).notNull(),
   },
-  (table) => [index("account_user_id_idx").on(table.userId)],
+  (table) => [
+    uniqueIndex("account_issuer_account_id_idx").on(table.issuer, table.accountId),
+    index("account_user_id_idx").on(table.userId),
+  ],
 );
 
 export const authVerifications = pgTable("verification", {
