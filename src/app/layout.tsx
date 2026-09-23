@@ -6,6 +6,8 @@ import { Footer } from "@/components/footer";
 import { SiteHeader } from "@/components/site-header";
 import { SkipLink } from "@/components/skip-link";
 import { Providers } from "@/components/providers";
+import { Toaster } from "sonner";
+import { getCurrentUser } from "@/lib/api/auth";
 import { readLanguageCookieValue } from "@/lib/language";
 import { LEGACY_PREFERENCE_MIGRATE_SCRIPT } from "@/lib/preference-migrate";
 import { readThemeCookieValue } from "@/lib/theme";
@@ -35,6 +37,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const cookieStore = await cookies();
   const initialTheme = readThemeCookieValue(cookieStore.get("theme")?.value);
   const initialLanguage = readLanguageCookieValue(cookieStore.get("language")?.value);
+  const user = await getCurrentUser();
+  const signedIn = Boolean(user);
 
   return (
     <html
@@ -47,11 +51,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         </Script>
         <Providers initialTheme={initialTheme} initialLanguage={initialLanguage}>
           <SkipLink />
-          <SiteHeader />
+          <SiteHeader signedIn={signedIn} />
           <main id="main-content" tabIndex={-1} className="page-shell">
             {children}
           </main>
-          <Footer />
+          <Footer signedIn={signedIn} />
+          <Toaster richColors position="top-center" />
         </Providers>
       </body>
     </html>

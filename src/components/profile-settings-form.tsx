@@ -13,6 +13,7 @@ type ProfileSettingsFormProps = {
     name: string;
     image?: string | null;
     emailVerified?: boolean;
+    receivesNewsletter?: boolean | null;
   };
 };
 
@@ -31,6 +32,7 @@ export function ProfileSettingsForm({ user }: ProfileSettingsFormProps) {
   const [name, setName] = useState(user.name);
   const [email, setEmail] = useState(user.email);
   const [image, setImage] = useState<string | null>(user.image ?? null);
+  const [receivesNewsletter, setReceivesNewsletter] = useState(Boolean(user.receivesNewsletter));
   const [loading, setLoading] = useState(false);
   const [verifyLoading, setVerifyLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
@@ -90,12 +92,13 @@ export function ProfileSettingsForm({ user }: ProfileSettingsFormProps) {
 
     setLoading(true);
 
-    const profileChanged = nextName !== user.name || image !== (user.image ?? null);
+    const profileChanged = nextName !== user.name || image !== (user.image ?? null) || receivesNewsletter !== Boolean(user.receivesNewsletter);
 
     if (profileChanged) {
       const { error } = await authClient.updateUser({
         name: nextName,
         image,
+        receivesNewsletter,
       });
       if (error) {
         setLoading(false);
@@ -215,6 +218,19 @@ export function ProfileSettingsForm({ user }: ProfileSettingsFormProps) {
             </button>
           </p>
         ) : null}
+      </div>
+
+      <div className="form-field form-field--check">
+        <input
+          type="checkbox"
+          id="profileNewsletterOptIn"
+          className="form-check-input"
+          checked={receivesNewsletter}
+          onChange={(e) => setReceivesNewsletter(e.target.checked)}
+        />
+        <label htmlFor="profileNewsletterOptIn" className="form-check-label">
+          {t("auth.newsletterOptIn")}
+        </label>
       </div>
 
       {errorMsg ? (

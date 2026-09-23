@@ -15,6 +15,7 @@ type AccountViewProps = {
     name: string;
     image?: string | null;
     emailVerified?: boolean;
+    receivesNewsletter?: boolean | null;
   };
 };
 
@@ -23,6 +24,8 @@ export function AccountView({ user }: AccountViewProps) {
   const router = useRouter();
   const [view, setView] = useState<"home" | "settings">("home");
   const portfolio = externalLinks.find((link) => link.id === "portfolio");
+  const soloApps = ssoApps.filter((app) => !app.pair);
+  const asebiliApps = ssoApps.filter((app) => app.pair === "asebili");
 
   if (view === "settings") {
     return (
@@ -91,9 +94,18 @@ export function AccountView({ user }: AccountViewProps) {
             </h2>
           </div>
           <ul className="account-app-grid">
-            {ssoApps.map((app, index) => (
+            {soloApps.map((app, index) => (
               <AppLaunchLink key={app.id} app={app} index={index} />
             ))}
+            {asebiliApps.length > 0 ? (
+              <li style={{ ["--stagger" as string]: `${soloApps.length * 60}ms` }}>
+                <div className="app-pair" role="group" aria-label="Asebili">
+                  {asebiliApps.map((app) => (
+                    <AppLaunchLink key={app.id} app={app} variant="split" />
+                  ))}
+                </div>
+              </li>
+            ) : null}
           </ul>
         </section>
       </div>

@@ -135,9 +135,17 @@ test.describe("accessibility", () => {
     expect(settingsResults.violations, formatViolations(settingsResults.violations as AxeViolation[])).toEqual([]);
   });
 
-  test("contact page", async ({ page }) => {
-    await expectNoAxeViolations("/contact", page);
-    await expect(page.getByRole("textbox", { name: /subject|assunto/i })).toBeVisible();
-    await expect(page.getByRole("button", { name: /send message|enviar mensagem/i })).toBeVisible();
+  test("unknown route shows not found", async ({ page }) => {
+    await expectNoAxeViolations("/this-page-does-not-exist", page);
+    await expect(page.getByRole("heading", { name: /page not found|página não encontrada/i })).toBeVisible();
+    await expect(page.getByRole("link", { name: /back to home|voltar ao início/i })).toBeVisible();
+    await expect(page.getByRole("link", { name: /^contact$|^contato$/i })).toHaveCount(0);
+  });
+
+  test("contact page requires sign in", async ({ page }) => {
+    await page.goto("/contact", { waitUntil: "networkidle" });
+    await expect(page).toHaveURL(/\/(\?|$)/);
+    await expect(page.getByRole("link", { name: /^contact$|^contato$/i })).toHaveCount(0);
+    await expect(page.getByRole("heading", { name: /welcome back|bem-vindo de volta/i })).toBeVisible();
   });
 });

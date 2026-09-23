@@ -15,6 +15,7 @@ export const trustedOrigins = [
   toHttpsOrigin(process.env.VERCEL_URL),
   toHttpsOrigin(process.env.VERCEL_BRANCH_URL),
   toHttpsOrigin(process.env.VERCEL_PROJECT_PRODUCTION_URL),
+  "https://*.daviandrade.dev",
   ...(process.env.BETTER_AUTH_TRUSTED_ORIGINS?.split(",") ?? []),
 ]
   .map((origin) => origin?.trim())
@@ -31,11 +32,29 @@ export const auth = betterAuth({
     ? { crossSubDomainCookies: { enabled: true, domain: cookieDomain } }
     : undefined,
   user: {
+    additionalFields: {
+      receivesNewsletter: {
+        type: "boolean",
+        required: false,
+        defaultValue: false,
+        input: true,
+      },
+    },
     changeEmail: {
       enabled: true,
       sendChangeEmailConfirmation: async ({ user, newEmail, url }) => {
         await sendAuthLinkEmail(user.email, `Approve email change to ${newEmail}`, url);
       },
+    },
+  },
+  socialProviders: {
+    github: {
+      clientId: process.env.GITHUB_CLIENT_ID ?? "",
+      clientSecret: process.env.GITHUB_CLIENT_SECRET ?? "",
+    },
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID ?? "",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
     },
   },
   emailVerification: {

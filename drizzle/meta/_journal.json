@@ -8,6 +8,13 @@
       "when": 1787963048888,
       "tag": "0000_white_bloodaxe",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790120026671,
+      "tag": "0001_add_newsletter_optin",
+      "breakpoints": true
     }
   ]
 }
