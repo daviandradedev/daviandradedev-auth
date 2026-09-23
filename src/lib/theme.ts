@@ -1,4 +1,5 @@
 import type { Theme } from "@/lib/contexts/theme-context";
+import { preferenceCookieDomain } from "@/lib/preference-cookie";
 
 const ONE_YEAR = 60 * 60 * 24 * 365;
 
@@ -10,7 +11,7 @@ export function persistTheme(theme: Theme) {
   if (typeof window === "undefined") return;
   try {
     localStorage.setItem("theme", theme);
-    document.cookie = `theme=${theme};path=/;max-age=${ONE_YEAR};SameSite=Lax`;
+    document.cookie = `theme=${theme};path=/;max-age=${ONE_YEAR};SameSite=Lax;${preferenceCookieDomain()}`;
     document.documentElement.classList.toggle("dark", theme === "dark");
   } catch {
   }

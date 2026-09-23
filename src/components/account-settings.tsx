@@ -11,6 +11,7 @@ type AccountSettingsProps = {
     name: string;
     image?: string | null;
     emailVerified?: boolean;
+    receivesNewsletter?: boolean | null;
   };
   onBack: () => void;
 };

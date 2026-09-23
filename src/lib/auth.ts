@@ -15,12 +15,23 @@ export const trustedOrigins = [
   toHttpsOrigin(process.env.VERCEL_URL),
   toHttpsOrigin(process.env.VERCEL_BRANCH_URL),
   toHttpsOrigin(process.env.VERCEL_PROJECT_PRODUCTION_URL),
+  "https://*.daviandrade.dev",
   ...(process.env.BETTER_AUTH_TRUSTED_ORIGINS?.split(",") ?? []),
 ]
   .map((origin) => origin?.trim())
   .filter((origin): origin is string => Boolean(origin));
 
 const cookieDomain = process.env.BETTER_AUTH_COOKIE_DOMAIN?.trim();
+
+function socialProvider(clientId?: string, clientSecret?: string) {
+  const id = clientId?.trim();
+  const secret = clientSecret?.trim();
+  if (!id || !secret) return null;
+  return { clientId: id, clientSecret: secret };
+}
+
+const github = socialProvider(process.env.GITHUB_CLIENT_ID, process.env.GITHUB_CLIENT_SECRET);
+const google = socialProvider(process.env.GOOGLE_CLIENT_ID, process.env.GOOGLE_CLIENT_SECRET);
 
 export const auth = betterAuth({
   database: pool,
@@ -31,12 +42,24 @@ export const auth = betterAuth({
     ? { crossSubDomainCookies: { enabled: true, domain: cookieDomain } }
     : undefined,
   user: {
+    additionalFields: {
+      receivesNewsletter: {
+        type: "boolean",
+        required: false,
+        defaultValue: false,
+        input: true,
+      },
+    },
     changeEmail: {
       enabled: true,
       sendChangeEmailConfirmation: async ({ user, newEmail, url }) => {
         await sendAuthLinkEmail(user.email, `Approve email change to ${newEmail}`, url);
       },
     },
+  },
+  socialProviders: {
+    ...(github ? { github } : {}),
+    ...(google ? { google } : {}),
   },
   emailVerification: {
     sendOnSignUp: true,

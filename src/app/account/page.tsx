@@ -15,6 +15,7 @@ export default async function AccountPage() {
         name: user.name,
         image: user.image,
         emailVerified: Boolean(user.emailVerified),
+        receivesNewsletter: Boolean(user.receivesNewsletter),
       }}
     />
   );
