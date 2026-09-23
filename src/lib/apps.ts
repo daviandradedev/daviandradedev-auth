@@ -3,6 +3,7 @@ export type PortfolioApp = {
   nameKey: string;
   href: string;
   description: { en: string; pt: string };
+  pair?: string;
 };
 
 export type ExternalLink = {
@@ -29,6 +30,26 @@ export const ssoApps: PortfolioApp[] = [
     description: {
       en: "Track series, episodes, and watch progress.",
       pt: "Acompanhe séries, episódios e progresso de visualização.",
+    },
+  },
+  {
+    id: "asebili-student",
+    nameKey: "apps.asebiliStudent",
+    pair: "asebili",
+    href: process.env.NEXT_PUBLIC_APP_ASEBILI_STUDENT_URL ?? "https://asebili-student.daviandrade.dev",
+    description: {
+      en: "Asebili LMS Student Portal.",
+      pt: "Portal do Aluno Asebili LMS.",
+    },
+  },
+  {
+    id: "asebili-instructor",
+    nameKey: "apps.asebiliInstructor",
+    pair: "asebili",
+    href: process.env.NEXT_PUBLIC_APP_ASEBILI_INSTRUCTOR_URL ?? "https://asebili-instructor.daviandrade.dev",
+    description: {
+      en: "Asebili LMS Instructor Portal.",
+      pt: "Portal do Instrutor Asebili LMS.",
     },
   },
 ];

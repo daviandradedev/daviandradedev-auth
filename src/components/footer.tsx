@@ -5,7 +5,7 @@ import { Mail } from "lucide-react";
 import { BrandWordmark } from "@/components/brand-wordmark";
 import { useLanguage } from "@/lib/contexts/language-context";
 
-export function Footer() {
+export function Footer({ signedIn }: { signedIn: boolean }) {
   const { t } = useLanguage();
   const year = new Date().getFullYear();
 
@@ -67,10 +67,12 @@ export function Footer() {
               </svg>
               <span className="sr-only">GitHub</span>
             </a>
-            <Link href="/contact" title={t("contact.nav")} aria-label={t("contact.nav")}>
-              <Mail size={16} aria-hidden="true" />
-              <span className="sr-only">{t("contact.nav")}</span>
-            </Link>
+            {signedIn ? (
+              <Link href="/contact" title={t("contact.nav")} aria-label={t("contact.nav")}>
+                <Mail size={16} aria-hidden="true" />
+                <span className="sr-only">{t("contact.nav")}</span>
+              </Link>
+            ) : null}
           </nav>
         </div>
       </div>

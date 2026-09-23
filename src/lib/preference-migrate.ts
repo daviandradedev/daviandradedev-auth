@@ -8,7 +8,8 @@ export const LEGACY_PREFERENCE_MIGRATE_SCRIPT = `
       });
     }
     function writeCookie(name, value) {
-      document.cookie = name + "=" + value + ";path=/;max-age=" + oneYear + ";SameSite=Lax";
+      var domain = window.location.hostname.includes("daviandrade.dev") ? "domain=.daviandrade.dev;" : "";
+      document.cookie = name + "=" + value + ";path=/;max-age=" + oneYear + ";SameSite=Lax;" + domain;
     }
     if (!hasCookie("language")) {
       var lang = localStorage.getItem("language");
