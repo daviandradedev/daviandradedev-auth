@@ -105,22 +105,12 @@ test.describe("accessibility", () => {
   test("account page — authenticated", async ({ page }) => {
     test.skip(!process.env.DATABASE_URL, "DATABASE_URL not configured");
 
-    const { markUserEmailVerified } = await import("./helpers/test-db");
-    const email = `a11y-${Date.now()}@example.com`;
-    const password = "testpassword123";
-
     await page.goto("/");
     await page.getByRole("button", { name: /create one|criar uma/i }).click();
-    await page.getByRole("textbox", { name: /email|e-mail/i }).fill(email);
-    await page.locator('input[type="password"]').fill(password);
+    await page.getByRole("textbox", { name: /^name$|^nome$/i }).fill("A11y User");
+    await page.getByRole("textbox", { name: /email|e-mail/i }).fill(`a11y-${Date.now()}@example.com`);
+    await page.locator('input[type="password"]').fill("testpassword123");
     await page.getByRole("button", { name: /create account|criar conta/i }).click();
-    await markUserEmailVerified(email);
-
-    await page.getByRole("button", { name: /already have|já tem conta/i }).click();
-    await page.getByRole("textbox", { name: /email|e-mail/i }).fill(email);
-    await page.locator('input[type="password"]').fill(password);
-    await page.getByRole("button", { name: /sign in|entrar/i }).click();
-
     await page.waitForURL("**/account", { timeout: 15_000 });
 
     await expectNoAxeViolations("/account", page);

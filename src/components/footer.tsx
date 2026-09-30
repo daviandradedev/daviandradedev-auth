@@ -1,11 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { Mail } from "lucide-react";
-import { BrandWordmark } from "@/components/brand-wordmark";
 import { useLanguage } from "@/lib/contexts/language-context";
 
-export function Footer({ signedIn }: { signedIn: boolean }) {
+export function Footer() {
   const { t } = useLanguage();
   const year = new Date().getFullYear();
 
@@ -13,7 +11,6 @@ export function Footer({ signedIn }: { signedIn: boolean }) {
     <footer className="site-footer">
       <div className="site-footer-inner">
         <div className="site-footer-grid">
-          <BrandWordmark variant="footer" />
           <p className="site-footer-copy">
             © {year} {t("footer.credit")}
           </p>
@@ -67,12 +64,10 @@ export function Footer({ signedIn }: { signedIn: boolean }) {
               </svg>
               <span className="sr-only">GitHub</span>
             </a>
-            {signedIn ? (
-              <Link href="/contact" title={t("contact.nav")} aria-label={t("contact.nav")}>
-                <Mail size={16} aria-hidden="true" />
-                <span className="sr-only">{t("contact.nav")}</span>
-              </Link>
-            ) : null}
+            <a href="mailto:daviandrade.dev@gmail.com" className="site-footer-mail" title="E-mail">
+              <Mail size={16} aria-hidden="true" />
+              <span className="sr-only">E-mail</span>
+            </a>
           </nav>
         </div>
       </div>

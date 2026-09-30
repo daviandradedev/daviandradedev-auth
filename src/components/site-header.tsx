@@ -12,10 +12,10 @@ export function SiteHeader({ signedIn }: { signedIn: boolean }) {
   return (
     <header className="site-header" aria-label={t("a11y.siteHeader")}>
       <div className="site-header-inner">
-        <Link href="/" className="brand-lockup">
-          <BrandWordmark variant="header" />
+        <a href="https://daviandrade.dev" className="brand-lockup">
+          <BrandWordmark />
           <span className="sr-only">{t("brand")}</span>
-        </Link>
+        </a>
         <div className="preferences-bar" role="group" aria-label={t("a11y.preferencesToolbar")}>
           {signedIn ? (
             <Link href="/contact" className="header-nav-link">
