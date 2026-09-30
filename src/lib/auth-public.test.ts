@@ -11,6 +11,10 @@ describe("trustedOrigins", () => {
     expect(trustedOrigins).toContain("http://localhost:3000");
   });
 
+  it("includes the production wildcard", () => {
+    expect(trustedOrigins).toContain("https://*.daviandrade.dev");
+  });
+
   it("has no duplicate origins", () => {
     expect(new Set(trustedOrigins).size).toBe(trustedOrigins.length);
   });

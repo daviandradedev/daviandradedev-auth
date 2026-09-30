@@ -8,6 +8,7 @@ export const trustedOrigins = [
   "http://localhost:3100",
   "http://localhost:3000",
   "http://localhost:3001",
+  "https://*.daviandrade.dev",
   "https://workschedule-dd.vercel.app",
   process.env.NEXT_PUBLIC_BETTER_AUTH_URL,
   ...(process.env.NEXT_PUBLIC_BETTER_AUTH_TRUSTED_ORIGINS?.split(",") ?? []),
