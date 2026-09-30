@@ -3,12 +3,18 @@ import { redirect } from "next/navigation";
 import { AuthForm } from "@/components/auth-form";
 import { HomeHero } from "@/components/home-hero";
 import { getCurrentUser } from "@/lib/api/auth";
+import { externalSessionHandoff } from "@/lib/external-handoff";
 
 export const dynamic = "force-dynamic";
 
-export default async function HomePage() {
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ callbackURL?: string }>;
+}) {
   const user = await getCurrentUser();
-  if (user) redirect("/account");
+  const { callbackURL } = await searchParams;
+  if (user) redirect((await externalSessionHandoff(callbackURL)) ?? "/account");
 
   return (
     <div className="auth-page">
