@@ -55,7 +55,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <main id="main-content" tabIndex={-1} className="page-shell">
             {children}
           </main>
-          <Footer signedIn={signedIn} />
+          <Footer />
           <Toaster richColors position="top-center" />
         </Providers>
       </body>

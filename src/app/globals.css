@@ -378,20 +378,13 @@ body {
   width: 100%;
 }
 
-.site-footer-brand {
-  flex-shrink: 0;
-  width: auto;
-  height: clamp(1rem, 2vw, 1.1rem);
-}
-
 .site-footer-copy {
   flex: 1;
   min-width: 0;
   margin: 0;
-  padding-inline: 0.75rem;
-  text-align: center;
+  text-align: start;
   font-size: clamp(0.625rem, 1.5vw, 0.75rem);
-  font-weight: 600;
+  font-weight: 400;
   line-height: 1.35;
   letter-spacing: 0.04em;
   color: var(--muted);
@@ -429,7 +422,7 @@ body {
   color: var(--ink);
 }
 
-.site-footer-links a:nth-of-type(3):hover {
+.site-footer-mail:hover {
   color: #ef4444;
 }
 
@@ -1546,7 +1539,7 @@ button.app-card:disabled {
   .site-footer-copy {
     flex: none;
     max-width: min(100%, 22em);
-    padding-inline: 0;
+    text-align: center;
   }
 
   .site-footer-links {

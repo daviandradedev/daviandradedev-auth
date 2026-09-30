@@ -34,7 +34,6 @@ export function ProfileSettingsForm({ user }: ProfileSettingsFormProps) {
   const [image, setImage] = useState<string | null>(user.image ?? null);
   const [receivesNewsletter, setReceivesNewsletter] = useState(Boolean(user.receivesNewsletter));
   const [loading, setLoading] = useState(false);
-  const [verifyLoading, setVerifyLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
 
@@ -56,22 +55,6 @@ export function ProfileSettingsForm({ user }: ProfileSettingsFormProps) {
     }
   }
 
-  async function handleSendVerification() {
-    setErrorMsg("");
-    setSuccessMsg("");
-    setVerifyLoading(true);
-    const { error } = await authClient.sendVerificationEmail({
-      email: user.email,
-      callbackURL: "/account",
-    });
-    setVerifyLoading(false);
-    if (error) {
-      setErrorMsg(t("account.verifyEmailFailed"));
-      return;
-    }
-    setSuccessMsg(t("account.verifyEmailSent"));
-  }
-
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setErrorMsg("");
@@ -85,10 +68,6 @@ export function ProfileSettingsForm({ user }: ProfileSettingsFormProps) {
     }
 
     const emailChanged = nextEmail !== normalizeAuthEmail(user.email);
-    if (emailChanged && !emailVerified) {
-      setErrorMsg(t("account.emailChangeRequiresVerification"));
-      return;
-    }
 
     setLoading(true);
 
@@ -189,9 +168,9 @@ export function ProfileSettingsForm({ user }: ProfileSettingsFormProps) {
       <div className="form-field">
         <label htmlFor={emailId} className="form-label">
           {t("auth.emailPlaceholder")}
-          <span className="form-label-hint">
-            {emailVerified ? t("account.emailVerifiedHint") : t("account.emailUnverifiedHint")}
-          </span>
+          {emailVerified ? (
+            <span className="form-label-hint">{t("account.emailVerifiedHint")}</span>
+          ) : null}
         </label>
         <input
           id={emailId}
@@ -201,23 +180,8 @@ export function ProfileSettingsForm({ user }: ProfileSettingsFormProps) {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          disabled={!emailVerified}
-          aria-disabled={!emailVerified || undefined}
           className="form-input"
         />
-        {!emailVerified ? (
-          <p className="form-field-action">
-            <button
-              type="button"
-              className="btn-link btn-link--inline"
-              onClick={() => void handleSendVerification()}
-              disabled={verifyLoading || undefined}
-              aria-busy={verifyLoading || undefined}
-            >
-              {verifyLoading ? t("auth.loading") : t("account.sendVerificationEmail")}
-            </button>
-          </p>
-        ) : null}
       </div>
 
       <div className="form-field form-field--check">

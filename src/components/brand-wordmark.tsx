@@ -1,20 +1,10 @@
-type BrandWordmarkProps = {
-  variant?: "header" | "footer";
-};
-
-export function BrandWordmark({ variant = "header" }: BrandWordmarkProps) {
-  const isFooter = variant === "footer";
-  const label = isFooter ? "daviandrade.dev" : "dandrade.dev";
-  const viewBox = isFooter ? "0 0 300 44" : "0 0 220 44";
-  const name = isFooter ? "daviandrade" : "dandrade";
-
+export function BrandWordmark() {
   return (
     <svg
-      className={isFooter ? "site-footer-brand" : "brand-wordmark-svg"}
+      className="brand-wordmark-svg"
       xmlns="http://www.w3.org/2000/svg"
-      viewBox={viewBox}
-      role="img"
-      aria-label={label}
+      viewBox="0 0 220 44"
+      aria-hidden="true"
       overflow="visible"
     >
       <text
@@ -24,7 +14,7 @@ export function BrandWordmark({ variant = "header" }: BrandWordmarkProps) {
         fontSize="32"
         fontWeight="900"
       >
-        <tspan className="brand-wordmark-name">{name}</tspan>
+        <tspan className="brand-wordmark-name">dandrade</tspan>
         <tspan className="brand-wordmark-suffix">.dev</tspan>
       </text>
     </svg>

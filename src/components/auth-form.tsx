@@ -90,38 +90,28 @@ export function AuthForm() {
         }
 
         toast.success(t("auth.verifyEmailPending"));
-        return;
-      }
+      } else {
+        const { error } = await authClient.signIn.email({ email, password, callbackURL });
+        if (error) {
+          const msg = error.message?.toLowerCase() ?? "";
 
-      const { error } = await authClient.signIn.email({ email, password, callbackURL });
-      if (error) {
-        const msg = error.message?.toLowerCase() ?? "";
-        const notVerified =
-          error.status === 403 ||
-          error.code === "EMAIL_NOT_VERIFIED" ||
-          msg.includes("verify");
-        
-        if (notVerified) {
-          toast.info(t("auth.emailNotVerifiedMsg"));
-          return;
-        }
+          if (msg.includes("body.email") || msg.includes("invalid input")) {
+            setErrorMsg(t("auth.invalidEmailFormatMsg"));
+            setFieldErrors({ email: true });
+            emailRef.current?.focus();
+            return;
+          }
 
-        if (msg.includes("body.email") || msg.includes("invalid input")) {
-          setErrorMsg(t("auth.invalidEmailFormatMsg"));
-          setFieldErrors({ email: true });
+          const authFailure =
+            error.status === 401 ||
+            error.code === "INVALID_EMAIL_OR_PASSWORD" ||
+            error.code === "INVALID_CREDENTIALS";
+
+          setErrorMsg(authFailure ? t("auth.wrongCredentialsMsg") : (error.message || t("auth.genericErrorMsg")));
+          setFieldErrors({ email: true, password: true });
           emailRef.current?.focus();
           return;
         }
-
-        const authFailure =
-          error.status === 401 ||
-          error.code === "INVALID_EMAIL_OR_PASSWORD" ||
-          error.code === "INVALID_CREDENTIALS";
-          
-        setErrorMsg(authFailure ? t("auth.wrongCredentialsMsg") : (error.message || t("auth.genericErrorMsg")));
-        setFieldErrors({ email: true, password: true });
-        emailRef.current?.focus();
-        return;
       }
 
       if (callbackURL.startsWith("http")) {
