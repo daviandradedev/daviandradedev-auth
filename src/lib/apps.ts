@@ -26,7 +26,7 @@ export const ssoApps: PortfolioApp[] = [
   {
     id: "seriesaholic",
     nameKey: "apps.seriesaholic",
-    href: process.env.NEXT_PUBLIC_APP_SERIESAHOLIC_URL ?? "http://localhost:3000",
+    href: process.env.NEXT_PUBLIC_APP_SERIESAHOLIC_URL?.trim() || "https://seriesaholic.daviandrade.dev",
     description: {
       en: "Track series, episodes, and watch progress.",
       pt: "Acompanhe séries, episódios e progresso de visualização.",
