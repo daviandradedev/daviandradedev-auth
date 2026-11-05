@@ -6,6 +6,7 @@ import { Footer } from "@/components/footer";
 import { SiteHeader } from "@/components/site-header";
 import { SkipLink } from "@/components/skip-link";
 import { Providers } from "@/components/providers";
+import { SessionKeepAlive } from "@/components/session-keep-alive";
 import { Toaster } from "sonner";
 import { getCurrentUser } from "@/lib/api/auth";
 import { readLanguageCookieValue } from "@/lib/language";
@@ -50,6 +51,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           {LEGACY_PREFERENCE_MIGRATE_SCRIPT}
         </Script>
         <Providers initialTheme={initialTheme} initialLanguage={initialLanguage}>
+          {signedIn && <SessionKeepAlive />}
           <SkipLink />
           <SiteHeader signedIn={signedIn} />
           <main id="main-content" tabIndex={-1} className="page-shell">

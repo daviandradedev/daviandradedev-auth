@@ -1,11 +1,13 @@
-import { auth } from "@/lib/auth";
+import { cache } from "react";
 import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
 
-export async function getCurrentSession() {
-  return auth.api.getSession({
+export const getCurrentSession = cache(async () =>
+  auth.api.getSession({
     headers: await headers(),
-  });
-}
+    query: { disableRefresh: true },
+  }),
+);
 
 export async function getCurrentUser() {
   const session = await getCurrentSession();

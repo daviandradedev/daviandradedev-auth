@@ -69,6 +69,10 @@ export const auth = betterAuth({
       await sendAuthLinkEmail(user.email, "Verify your daviandrade.dev account", url);
     },
   },
+  session: {
+    expiresIn: 60 * 60 * 24 * 30,
+    updateAge: 60 * 60 * 24,
+  },
   emailAndPassword: {
     enabled: true,
     autoSignIn: true,
