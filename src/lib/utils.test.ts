@@ -1,9 +1,21 @@
 import { describe, expect, it } from "vitest";
-import { cn, externalHandoffUrl, isSafeCallbackUrl } from "@/lib/utils";
+import { cn, externalHandoffUrl, hubReturnPath, isSafeCallbackUrl } from "@/lib/utils";
 
 describe("cn", () => {
   it("merges class names", () => {
     expect(cn("px-2", "px-4")).toBe("px-4");
+  });
+});
+
+describe("hubReturnPath", () => {
+  it("keeps a hub path as it is", () => {
+    expect(hubReturnPath("/account")).toBe("/account");
+  });
+
+  it("sends an app address back through the hub so the app gets a one-time token", () => {
+    expect(hubReturnPath("https://seriesaholic.daviandrade.dev/shows/1?tab=2")).toBe(
+      "/?callbackURL=https%3A%2F%2Fseriesaholic.daviandrade.dev%2Fshows%2F1%3Ftab%3D2",
+    );
   });
 });
 

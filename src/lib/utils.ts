@@ -35,6 +35,10 @@ export function isSafeCallbackUrl(url: string | null | undefined, trustedOrigins
   return callbackUrl(url, trustedOrigins) !== null;
 }
 
+export function hubReturnPath(callbackURL: string) {
+  return callbackURL.startsWith("/") ? callbackURL : `/?callbackURL=${encodeURIComponent(callbackURL)}`;
+}
+
 export function externalHandoffUrl(
   callbackURL: string | undefined,
   hubOrigin: string,
