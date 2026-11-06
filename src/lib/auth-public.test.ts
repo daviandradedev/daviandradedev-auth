@@ -15,6 +15,11 @@ describe("trustedOrigins", () => {
     expect(trustedOrigins).toContain("https://*.daviandrade.dev");
   });
 
+  it("trusts the portfolio apps hosted outside daviandrade.dev", () => {
+    expect(trustedOrigins).toContain("https://workschedule-dd.vercel.app");
+    expect(trustedOrigins).toContain("https://asebili-instructor-dd.vercel.app");
+  });
+
   it("has no duplicate origins", () => {
     expect(new Set(trustedOrigins).size).toBe(trustedOrigins.length);
   });
