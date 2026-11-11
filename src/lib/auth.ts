@@ -19,7 +19,8 @@ export const trustedOrigins = [
   ...(process.env.BETTER_AUTH_TRUSTED_ORIGINS?.split(",") ?? []),
 ]
   .map((origin) => origin?.trim())
-  .filter((origin): origin is string => Boolean(origin));
+  .filter((origin): origin is string => Boolean(origin))
+  .filter((origin, index, origins) => origins.indexOf(origin) === index);
 
 const cookieDomain = process.env.BETTER_AUTH_COOKIE_DOMAIN?.trim();
 

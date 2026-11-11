@@ -20,7 +20,7 @@ describe("hubReturnPath", () => {
 });
 
 describe("isSafeCallbackUrl", () => {
-  const trusted = ["http://localhost:3100", "https://workschedule-dd.vercel.app"];
+  const trusted = ["http://localhost:3100", "https://work-schedule.daviandrade.dev"];
   const wildcard = ["https://*.daviandrade.dev"];
 
   it("rejects empty values", () => {
@@ -52,8 +52,11 @@ describe("isSafeCallbackUrl", () => {
     expect(isSafeCallbackUrl("http://localhost:3100/", [":::bad", "http://localhost:3100"])).toBe(true);
   });
 
-  it("accepts wildcard subdomains", () => {
+  it("accepts wildcard subdomains for every portfolio app", () => {
     expect(isSafeCallbackUrl("https://seriesaholic.daviandrade.dev/shows/1", wildcard)).toBe(true);
+    expect(isSafeCallbackUrl("https://work-schedule.daviandrade.dev/", wildcard)).toBe(true);
+    expect(isSafeCallbackUrl("https://asebili-student.daviandrade.dev/", wildcard)).toBe(true);
+    expect(isSafeCallbackUrl("https://asebili-instructor.daviandrade.dev/", wildcard)).toBe(true);
   });
 
   it("rejects the apex, a lookalike host, and a downgraded protocol", () => {

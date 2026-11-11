@@ -13,11 +13,16 @@ export type ExternalLink = {
   description: { en: string; pt: string };
 };
 
+function appHref(configured: string | undefined, fallback: string) {
+  const value = configured?.trim();
+  return value || fallback;
+}
+
 export const ssoApps: PortfolioApp[] = [
   {
     id: "work-schedule",
     nameKey: "apps.workSchedule",
-    href: process.env.NEXT_PUBLIC_APP_WORK_SCHEDULE_URL ?? "https://workschedule-dd.vercel.app/",
+    href: appHref(process.env.NEXT_PUBLIC_APP_WORK_SCHEDULE_URL, "https://work-schedule.daviandrade.dev"),
     description: {
       en: "On-site work schedule generator.",
       pt: "Gerador de escalas de trabalho presencial.",
@@ -26,7 +31,7 @@ export const ssoApps: PortfolioApp[] = [
   {
     id: "seriesaholic",
     nameKey: "apps.seriesaholic",
-    href: process.env.NEXT_PUBLIC_APP_SERIESAHOLIC_URL?.trim() || "https://seriesaholic.daviandrade.dev",
+    href: appHref(process.env.NEXT_PUBLIC_APP_SERIESAHOLIC_URL, "https://seriesaholic.daviandrade.dev"),
     description: {
       en: "Track series, episodes, and watch progress.",
       pt: "Acompanhe séries, episódios e progresso de visualização.",
@@ -36,7 +41,7 @@ export const ssoApps: PortfolioApp[] = [
     id: "asebili-student",
     nameKey: "apps.asebiliStudent",
     pair: "asebili",
-    href: process.env.NEXT_PUBLIC_APP_ASEBILI_STUDENT_URL ?? "https://asebili-student.daviandrade.dev",
+    href: appHref(process.env.NEXT_PUBLIC_APP_ASEBILI_STUDENT_URL, "https://asebili-student.daviandrade.dev"),
     description: {
       en: "Asebili LMS Student Portal.",
       pt: "Portal do Aluno Asebili LMS.",
@@ -46,7 +51,7 @@ export const ssoApps: PortfolioApp[] = [
     id: "asebili-instructor",
     nameKey: "apps.asebiliInstructor",
     pair: "asebili",
-    href: process.env.NEXT_PUBLIC_APP_ASEBILI_INSTRUCTOR_URL ?? "https://asebili-instructor.daviandrade.dev",
+    href: appHref(process.env.NEXT_PUBLIC_APP_ASEBILI_INSTRUCTOR_URL, "https://asebili-instructor.daviandrade.dev"),
     description: {
       en: "Asebili LMS Instructor Portal.",
       pt: "Portal do Instrutor Asebili LMS.",
@@ -58,7 +63,7 @@ export const externalLinks: ExternalLink[] = [
   {
     id: "portfolio",
     nameKey: "apps.portfolio",
-    href: process.env.NEXT_PUBLIC_APP_PORTFOLIO_URL ?? "https://daviandrade-portfolio.vercel.app/",
+    href: appHref(process.env.NEXT_PUBLIC_APP_PORTFOLIO_URL, "https://www.daviandrade.dev"),
     description: {
       en: "Personal portfolio site.",
       pt: "Site do portfólio pessoal.",

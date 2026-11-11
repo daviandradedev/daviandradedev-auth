@@ -10,7 +10,7 @@ App data (schedules, series progress, …) stays in **each app database**, keyed
 Use a shared parent domain, for example:
 
 - `auth.daviandrade.dev` → this hub
-- `workschedule.daviandrade.dev`
+- `work-schedule.daviandrade.dev`
 - `seriesaholic.daviandrade.dev`
 
 Set `BETTER_AUTH_COOKIE_DOMAIN=.daviandrade.dev` on the hub and every consumer.

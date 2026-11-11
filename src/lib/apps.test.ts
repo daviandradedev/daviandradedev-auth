@@ -13,10 +13,18 @@ describe("apps config", () => {
     expect(portfolioApps).toBe(ssoApps);
   });
 
-  it("points seriesaholic at the production site when the env is empty", async () => {
+  it("points each portfolio app at its daviandrade.dev site when the env is blank", async () => {
+    vi.stubEnv("NEXT_PUBLIC_APP_WORK_SCHEDULE_URL", " ");
     vi.stubEnv("NEXT_PUBLIC_APP_SERIESAHOLIC_URL", "");
+    vi.stubEnv("NEXT_PUBLIC_APP_ASEBILI_STUDENT_URL", "");
+    vi.stubEnv("NEXT_PUBLIC_APP_ASEBILI_INSTRUCTOR_URL", "");
+    vi.stubEnv("NEXT_PUBLIC_APP_PORTFOLIO_URL", " ");
     vi.resetModules();
-    const { ssoApps: apps } = await import("@/lib/apps");
+    const { externalLinks: links, ssoApps: apps } = await import("@/lib/apps");
+    expect(apps.find((app) => app.id === "work-schedule")?.href).toBe("https://work-schedule.daviandrade.dev");
     expect(apps.find((app) => app.id === "seriesaholic")?.href).toBe("https://seriesaholic.daviandrade.dev");
+    expect(apps.find((app) => app.id === "asebili-student")?.href).toBe("https://asebili-student.daviandrade.dev");
+    expect(apps.find((app) => app.id === "asebili-instructor")?.href).toBe("https://asebili-instructor.daviandrade.dev");
+    expect(links.find((link) => link.id === "portfolio")?.href).toBe("https://www.daviandrade.dev");
   });
 });
