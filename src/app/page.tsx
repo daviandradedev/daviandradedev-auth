@@ -2,8 +2,9 @@ import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { AuthForm } from "@/components/auth-form";
 import { HomeHero } from "@/components/home-hero";
+import { ExternalRedirect } from "@/components/redirect-screen";
 import { getCurrentUser } from "@/lib/api/auth";
-import { externalSessionHandoff } from "@/lib/external-handoff";
+import { externalCallbackTarget } from "@/lib/external-handoff";
 
 export const dynamic = "force-dynamic";
 
@@ -14,7 +15,11 @@ export default async function HomePage({
 }) {
   const user = await getCurrentUser();
   const { callbackURL } = await searchParams;
-  if (user) redirect((await externalSessionHandoff(callbackURL)) ?? "/account");
+  if (user) {
+    const target = externalCallbackTarget(callbackURL);
+    if (target) return <ExternalRedirect callbackURL={target} />;
+    redirect("/account");
+  }
 
   return (
     <div className="auth-page">

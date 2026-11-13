@@ -17,4 +17,9 @@ describe("safeNextPath", () => {
     expect(safeNextPath("//evil.example")).toBe("/account");
     expect(safeNextPath("/\\evil.example")).toBe("/account");
   });
+
+  it("refuses to send the continue page back to itself", () => {
+    expect(safeNextPath("/continue")).toBe("/account");
+    expect(safeNextPath("/continue?next=/account")).toBe("/account");
+  });
 });

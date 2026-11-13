@@ -7,6 +7,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
 import { redirectToExternalApp } from "@/lib/auth-redirect";
+import { openingTitle, RedirectScreen } from "@/components/redirect-screen";
 import { useLanguage } from "@/lib/contexts/language-context";
 import { hubReturnPath, isSafeCallbackUrl } from "@/lib/utils";
 import { trustedOrigins } from "@/lib/auth-public";
@@ -32,6 +33,7 @@ export function AuthForm() {
   const [loading, setLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   const [receivesNewsletter, setReceivesNewsletter] = useState(false);
+  const [leaving, setLeaving] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [fieldErrors, setFieldErrors] = useState<{ name?: boolean; email?: boolean; password?: boolean }>({});
 
@@ -115,6 +117,7 @@ export function AuthForm() {
       }
 
       if (callbackURL.startsWith("http")) {
+        setLeaving(true);
         await redirectToExternalApp(callbackURL);
         return;
       }
@@ -126,6 +129,8 @@ export function AuthForm() {
   }
 
   const describedBy = [passwordHintId, errorMsg ? errorId : undefined].filter(Boolean).join(" ");
+
+  if (leaving) return <RedirectScreen title={openingTitle(callbackURL, t)} />;
 
   return (
     <section aria-labelledby={titleId} className="auth-card">

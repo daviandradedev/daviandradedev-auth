@@ -3,7 +3,7 @@ import { auth } from "@/lib/auth";
 import { trustedOrigins } from "@/lib/auth-public";
 import { externalHandoffUrl } from "@/lib/utils";
 
-export async function externalSessionHandoff(callbackURL: string | undefined) {
+export function externalCallbackTarget(callbackURL: string | undefined) {
   const configured = process.env.BETTER_AUTH_URL;
   if (!configured) return null;
 
@@ -14,9 +14,14 @@ export async function externalSessionHandoff(callbackURL: string | undefined) {
     return null;
   }
 
-  const target = externalHandoffUrl(callbackURL, hubOrigin, trustedOrigins);
-  if (!target) return null;
+  return externalHandoffUrl(callbackURL, hubOrigin, trustedOrigins)?.toString() ?? null;
+}
 
+export async function externalSessionHandoff(callbackURL: string | undefined) {
+  const targetUrl = externalCallbackTarget(callbackURL);
+  if (!targetUrl) return null;
+
+  const target = new URL(targetUrl);
   try {
     const issued = await auth.api.generateOneTimeToken({
       headers: await headers(),

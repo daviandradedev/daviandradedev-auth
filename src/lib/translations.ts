@@ -124,6 +124,11 @@ export const translations = {
       externalLinksTitle: "External Links",
       externalLinksDesc: "Other projects and resources.",
     },
+    redirect: {
+      returning: "Returning to your account",
+      opening: "Opening the app",
+      openingNamed: "Opening {name}",
+    },
     footer: {
       credit: "Davi Andrade. SSO for portfolio apps.",
       social: "Social links",
@@ -264,6 +269,11 @@ export const translations = {
       portfolio: "Portfólio",
       asebiliStudent: "Asebili (Student P.O.V)",
       asebiliInstructor: "Asebili (Instructor P.O.V)",
+    },
+    redirect: {
+      returning: "Voltando para a sua conta",
+      opening: "Abrindo o app",
+      openingNamed: "Abrindo {name}",
     },
     footer: {
       credit: "Davi Andrade. SSO para apps do portfólio.",

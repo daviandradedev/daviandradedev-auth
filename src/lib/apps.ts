@@ -72,3 +72,22 @@ export const externalLinks: ExternalLink[] = [
 ];
 
 export const portfolioApps = ssoApps;
+
+export function appNameKeyForHref(href: string) {
+  let origin: string;
+  try {
+    origin = new URL(href).origin;
+  } catch {
+    return null;
+  }
+
+  const match = [...ssoApps, ...externalLinks].find((app) => {
+    try {
+      return new URL(app.href).origin === origin;
+    } catch {
+      return false;
+    }
+  });
+
+  return match?.nameKey ?? null;
+}

@@ -13,7 +13,7 @@ vi.mock("@/lib/auth", () => ({
 }));
 
 import { auth } from "@/lib/auth";
-import { externalSessionHandoff } from "@/lib/external-handoff";
+import { externalCallbackTarget, externalSessionHandoff } from "@/lib/external-handoff";
 
 const generateOneTimeToken = vi.mocked(auth.api.generateOneTimeToken);
 
@@ -29,7 +29,15 @@ describe("externalSessionHandoff", () => {
 
   it("returns null when the hub url is missing", async () => {
     vi.stubEnv("BETTER_AUTH_URL", "");
+    expect(externalCallbackTarget("http://localhost:3000/shows/1")).toBeNull();
     expect(await externalSessionHandoff("http://localhost:3000/shows/1")).toBeNull();
+    expect(generateOneTimeToken).not.toHaveBeenCalled();
+  });
+
+  it("returns a trusted callback without issuing a token", () => {
+    expect(externalCallbackTarget("http://localhost:3000/shows/1?tab=1")).toBe(
+      "http://localhost:3000/shows/1?tab=1",
+    );
     expect(generateOneTimeToken).not.toHaveBeenCalled();
   });
 

@@ -4,12 +4,18 @@ import { safeNextPath } from "@/lib/bootstrap-next";
 
 export const runtime = "nodejs";
 
+function continueRedirect(request: NextRequest, nextPath: string) {
+  const destination = new URL("/continue", request.url);
+  destination.searchParams.set("next", nextPath);
+  return NextResponse.redirect(destination);
+}
+
 export async function GET(request: NextRequest) {
   const ott = request.nextUrl.searchParams.get("ott");
   const nextPath = safeNextPath(request.nextUrl.searchParams.get("next"));
 
   if (!ott) {
-    return NextResponse.redirect(new URL(nextPath, request.url));
+    return continueRedirect(request, nextPath);
   }
 
   const verifyResponse = await auth.handler(
@@ -26,7 +32,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(login);
   }
 
-  const redirect = NextResponse.redirect(new URL(nextPath, request.url));
+  const redirect = continueRedirect(request, nextPath);
   for (const cookie of verifyResponse.headers.getSetCookie()) {
     redirect.headers.append("Set-Cookie", cookie);
   }

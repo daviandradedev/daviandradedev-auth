@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { externalLinks, portfolioApps, ssoApps } from "@/lib/apps";
+import { appNameKeyForHref, externalLinks, portfolioApps, ssoApps } from "@/lib/apps";
 
 describe("apps config", () => {
   afterEach(() => {
@@ -26,5 +26,13 @@ describe("apps config", () => {
     expect(apps.find((app) => app.id === "asebili-student")?.href).toBe("https://asebili-student.daviandrade.dev");
     expect(apps.find((app) => app.id === "asebili-instructor")?.href).toBe("https://asebili-instructor.daviandrade.dev");
     expect(links.find((link) => link.id === "portfolio")?.href).toBe("https://www.daviandrade.dev");
+  });
+
+  it("matches a callback to the app that owns that origin", () => {
+    const app = ssoApps[0];
+    if (!app) throw new Error("expected a portfolio app");
+    expect(appNameKeyForHref(`${app.href}/path?x=1`)).toBe(app.nameKey);
+    expect(appNameKeyForHref("https://evil.example")).toBeNull();
+    expect(appNameKeyForHref("not a url")).toBeNull();
   });
 });
