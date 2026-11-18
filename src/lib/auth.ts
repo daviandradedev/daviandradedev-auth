@@ -1,0 +1,102 @@
+import { betterAuth } from "better-auth";
+import { bearer, oneTimeToken } from "better-auth/plugins";
+import { normalizeAuthEmail } from "@/lib/auth-policy";
+import { pool } from "@/lib/db";
+import { sendAuthLinkEmail } from "@/lib/mail/resend";
+
+function toHttpsOrigin(host?: string) {
+  const value = host?.trim();
+  if (!value) return undefined;
+  return value.startsWith("http") ? value : `https://${value}`;
+}
+
+export const trustedOrigins = [
+  process.env.BETTER_AUTH_URL,
+  toHttpsOrigin(process.env.VERCEL_URL),
+  toHttpsOrigin(process.env.VERCEL_BRANCH_URL),
+  toHttpsOrigin(process.env.VERCEL_PROJECT_PRODUCTION_URL),
+  "http://localhost:3200",
+  "https://daviandrade.dev",
+  "https://www.daviandrade.dev",
+  "https://*.daviandrade.dev",
+  ...(process.env.BETTER_AUTH_TRUSTED_ORIGINS?.split(",") ?? []),
+]
+  .map((origin) => origin?.trim())
+  .filter((origin): origin is string => Boolean(origin))
+  .filter((origin, index, origins) => origins.indexOf(origin) === index);
+
+const cookieDomain = process.env.BETTER_AUTH_COOKIE_DOMAIN?.trim();
+
+function socialProvider(clientId?: string, clientSecret?: string) {
+  const id = clientId?.trim();
+  const secret = clientSecret?.trim();
+  if (!id || !secret) return null;
+  return { clientId: id, clientSecret: secret };
+}
+
+const github = socialProvider(process.env.GITHUB_CLIENT_ID, process.env.GITHUB_CLIENT_SECRET);
+const google = socialProvider(process.env.GOOGLE_CLIENT_ID, process.env.GOOGLE_CLIENT_SECRET);
+
+export const auth = betterAuth({
+  database: pool,
+  secret: process.env.BETTER_AUTH_SECRET,
+  baseURL: process.env.BETTER_AUTH_URL,
+  trustedOrigins,
+  advanced: cookieDomain
+    ? { crossSubDomainCookies: { enabled: true, domain: cookieDomain } }
+    : undefined,
+  user: {
+    additionalFields: {
+      receivesNewsletter: {
+        type: "boolean",
+        required: false,
+        defaultValue: false,
+        input: true,
+      },
+    },
+    changeEmail: {
+      enabled: true,
+      sendChangeEmailConfirmation: async ({ user, newEmail, url }) => {
+        await sendAuthLinkEmail(user.email, `Approve email change to ${newEmail}`, url);
+      },
+    },
+  },
+  socialProviders: {
+    ...(github ? { github } : {}),
+    ...(google ? { google } : {}),
+  },
+  emailVerification: {
+    sendOnSignUp: true,
+    sendOnSignIn: false,
+    autoSignInAfterVerification: true,
+    sendVerificationEmail: async ({ user, url }) => {
+      await sendAuthLinkEmail(user.email, "Verify your daviandrade.dev account", url);
+    },
+  },
+  session: {
+    expiresIn: 60 * 60 * 24 * 30,
+    updateAge: 60 * 60 * 24,
+  },
+  emailAndPassword: {
+    enabled: true,
+    autoSignIn: true,
+    requireEmailVerification: false,
+    minPasswordLength: 8,
+    maxPasswordLength: 128,
+    revokeSessionsOnPasswordReset: true,
+    sendResetPassword: async ({ user, url }) => {
+      await sendAuthLinkEmail(user.email, "Reset your password", url);
+    },
+  },
+  plugins: [bearer(), oneTimeToken()],
+  databaseHooks: {
+    user: {
+      create: {
+        before: async (user) => {
+          const email = normalizeAuthEmail(user.email);
+          return { data: { ...user, email, id: email } };
+        },
+      },
+    },
+  },
+});
