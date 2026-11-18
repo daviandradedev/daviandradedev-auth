@@ -1,0 +1,94 @@
+import { describe, expect, it } from "vitest";
+import { cn, externalHandoffUrl, hubReturnPath, isSafeCallbackUrl } from "@/lib/utils";
+
+describe("cn", () => {
+  it("merges class names", () => {
+    expect(cn("px-2", "px-4")).toBe("px-4");
+  });
+});
+
+describe("hubReturnPath", () => {
+  it("keeps a hub path as it is", () => {
+    expect(hubReturnPath("/account")).toBe("/account");
+  });
+
+  it("sends an app address back through the hub so the app gets a one-time token", () => {
+    expect(hubReturnPath("https://seriesaholic.daviandrade.dev/shows/1?tab=2")).toBe(
+      "/?callbackURL=https%3A%2F%2Fseriesaholic.daviandrade.dev%2Fshows%2F1%3Ftab%3D2",
+    );
+  });
+});
+
+describe("isSafeCallbackUrl", () => {
+  const trusted = ["http://localhost:3100", "https://work-schedule.daviandrade.dev"];
+  const wildcard = ["https://*.daviandrade.dev"];
+
+  it("rejects empty values", () => {
+    expect(isSafeCallbackUrl(null, trusted)).toBe(false);
+    expect(isSafeCallbackUrl(undefined, trusted)).toBe(false);
+  });
+
+  it("accepts trusted origins", () => {
+    expect(isSafeCallbackUrl("http://localhost:3100/account", trusted)).toBe(true);
+  });
+
+  it("rejects untrusted origins", () => {
+    expect(isSafeCallbackUrl("https://evil.example/account", trusted)).toBe(false);
+  });
+
+  it("rejects malformed urls", () => {
+    expect(isSafeCallbackUrl("not-a-url", trusted)).toBe(false);
+  });
+
+  it("rejects non-http protocols", () => {
+    expect(isSafeCallbackUrl("javascript:alert(1)", trusted)).toBe(false);
+  });
+
+  it("rejects a trusted host smuggled as userinfo", () => {
+    expect(isSafeCallbackUrl("http://localhost:3100@evil.com/account", trusted)).toBe(false);
+  });
+
+  it("ignores malformed trusted entries", () => {
+    expect(isSafeCallbackUrl("http://localhost:3100/", [":::bad", "http://localhost:3100"])).toBe(true);
+  });
+
+  it("accepts wildcard subdomains for every portfolio app", () => {
+    expect(isSafeCallbackUrl("https://seriesaholic.daviandrade.dev/shows/1", wildcard)).toBe(true);
+    expect(isSafeCallbackUrl("https://work-schedule.daviandrade.dev/", wildcard)).toBe(true);
+    expect(isSafeCallbackUrl("https://asebili-student.daviandrade.dev/", wildcard)).toBe(true);
+    expect(isSafeCallbackUrl("https://asebili-instructor.daviandrade.dev/", wildcard)).toBe(true);
+  });
+
+  it("rejects a lookalike host and a downgraded protocol under the wildcard alone", () => {
+    expect(isSafeCallbackUrl("https://daviandrade.dev/", wildcard)).toBe(false);
+    expect(isSafeCallbackUrl("https://evil-daviandrade.dev/", wildcard)).toBe(false);
+    expect(isSafeCallbackUrl("http://seriesaholic.daviandrade.dev/", wildcard)).toBe(false);
+  });
+
+  it("accepts the portfolio apex when it is listed explicitly", () => {
+    const withApex = [...wildcard, "https://daviandrade.dev", "https://www.daviandrade.dev"];
+    expect(isSafeCallbackUrl("https://daviandrade.dev/", withApex)).toBe(true);
+    expect(isSafeCallbackUrl("https://www.daviandrade.dev/admin", withApex)).toBe(true);
+  });
+});
+
+describe("externalHandoffUrl", () => {
+  const trusted = ["http://localhost:3000", "https://*.daviandrade.dev"];
+
+  it("returns an external trusted callback", () => {
+    const target = externalHandoffUrl(
+      "http://localhost:3000/shows/1?tab=1",
+      "http://localhost:3100",
+      trusted,
+    );
+    expect(target?.toString()).toBe("http://localhost:3000/shows/1?tab=1");
+  });
+
+  it("returns null for the hub origin", () => {
+    expect(externalHandoffUrl("http://localhost:3100/account", "http://localhost:3100", trusted)).toBeNull();
+  });
+
+  it("returns null for an untrusted callback", () => {
+    expect(externalHandoffUrl("https://evil.example/", "http://localhost:3100", trusted)).toBeNull();
+  });
+});
