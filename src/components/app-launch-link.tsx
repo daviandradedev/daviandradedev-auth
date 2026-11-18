@@ -1,0 +1,49 @@
+"use client";
+
+import { useState } from "react";
+import { showRedirectScreen } from "@/components/redirect-screen";
+import { redirectToExternalApp } from "@/lib/auth-redirect";
+import { useLanguage } from "@/lib/contexts/language-context";
+import type { PortfolioApp } from "@/lib/apps";
+
+type AppLaunchLinkProps = {
+  app: PortfolioApp;
+  index?: number;
+  variant?: "card" | "split";
+};
+
+export function AppLaunchLink({ app, index = 0, variant = "card" }: AppLaunchLinkProps) {
+  const { t, language } = useLanguage();
+  const [leaving, setLeaving] = useState(false);
+  const title = t("redirect.openingNamed").replaceAll("{name}", t(app.nameKey));
+
+  async function handleLaunch() {
+    if (leaving) return;
+    setLeaving(true);
+    showRedirectScreen(title);
+    await redirectToExternalApp(app.href);
+  }
+
+  const button = (
+    <button
+      type="button"
+      className={variant === "split" ? "app-pair-half" : `app-card app-card--${app.id}`}
+      onClick={() => void handleLaunch()}
+      disabled={leaving}
+      aria-busy={leaving || undefined}
+      aria-label={`${t(app.nameKey)} — ${app.description[language]}`}
+    >
+      <div className="app-card-body">
+        <p className="app-card-name">{t(app.nameKey)}</p>
+        <p className="app-card-desc">{app.description[language]}</p>
+      </div>
+      <span className="app-card-arrow" aria-hidden="true">
+        →
+      </span>
+    </button>
+  );
+
+  if (variant === "split") return button;
+
+  return <li style={{ ["--stagger" as string]: `${index * 60}ms` }}>{button}</li>;
+}
